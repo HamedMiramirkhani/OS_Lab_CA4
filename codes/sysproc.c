@@ -89,3 +89,45 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+int
+sys_sem_init(void)
+{
+  int sem_id, value;
+  if(argint(0, &sem_id) < 0 || argint(1, &value) < 0)
+    return -1;
+
+  if(sem_id < 0 || sem_id >= NSEMS)
+    return -1;
+
+  sem_init(sem_id, value);
+  return 0;
+}
+
+int
+sys_sem_acquire(void)
+{
+  int sem_id;
+  if(argint(0, &sem_id) < 0)
+    return -1;
+
+  if(sem_id < 0 || sem_id >= NSEMS)
+    return -1;
+
+  sem_acquire(sem_id);
+  return 0;
+}
+
+int
+sys_sem_release(void)
+{
+  int sem_id;
+  if(argint(0, &sem_id) < 0)
+    return -1;
+
+  if(sem_id < 0 || sem_id >= NSEMS)
+    return -1;
+
+  sem_release(sem_id);
+  return 0;
+}
