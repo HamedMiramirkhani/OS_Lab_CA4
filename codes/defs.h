@@ -9,6 +9,7 @@ struct spinlock;
 struct sleeplock;
 struct stat;
 struct superblock;
+struct semaphore;
 
 // bio.c
 void            binit(void);
@@ -186,5 +187,17 @@ void            switchkvm(void);
 int             copyout(pde_t*, uint, void*, uint);
 void            clearpteu(pde_t *pgdir, char *uva);
 
+// semaphore.c
+void            semaphore_init(struct semaphore*, int);
+void            semaphore_acquire(struct semaphore*);
+void            semaphore_release(struct semaphore*);
+int             semaphore_holding(struct semaphore*);
+void            sem_init(int, int);
+void            sem_acquire(int);
+void            sem_release(int);
+
+
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))
+
+void            wakeupproc(struct proc*);

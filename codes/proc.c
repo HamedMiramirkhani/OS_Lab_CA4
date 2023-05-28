@@ -532,3 +532,12 @@ procdump(void)
     cprintf("\n");
   }
 }
+
+
+void
+wakeupproc(struct proc* p)
+{
+  acquire(&ptable.lock);
+  p->state = RUNNABLE;
+  release(&ptable.lock);
+}
