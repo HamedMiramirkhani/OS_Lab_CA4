@@ -23,3 +23,6 @@
 #define SYS_sem_init 22
 #define SYS_sem_acquire 23
 #define SYS_sem_release 24
+#define SYS_setvar  25
+#define SYS_getvar  26
+#define SYS_modvar  27

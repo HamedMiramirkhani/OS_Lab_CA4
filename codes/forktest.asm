@@ -59,11 +59,11 @@ main(void)
 {
   56:	83 ec 10             	sub    $0x10,%esp
   write(fd, s, strlen(s));
-  59:	68 8c 04 00 00       	push   $0x48c
+  59:	68 a4 04 00 00       	push   $0x4a4
   5e:	e8 6d 01 00 00       	call   1d0 <strlen>
   63:	83 c4 0c             	add    $0xc,%esp
   66:	50                   	push   %eax
-  67:	68 8c 04 00 00       	push   $0x48c
+  67:	68 a4 04 00 00       	push   $0x4a4
   6c:	6a 01                	push   $0x1
   6e:	e8 7e 03 00 00       	call   3f1 <write>
   73:	83 c4 10             	add    $0x10,%esp
@@ -98,11 +98,11 @@ main(void)
   b6:	75 71                	jne    129 <forktest+0xd9>
   write(fd, s, strlen(s));
   b8:	83 ec 0c             	sub    $0xc,%esp
-  bb:	68 be 04 00 00       	push   $0x4be
+  bb:	68 d6 04 00 00       	push   $0x4d6
   c0:	e8 0b 01 00 00       	call   1d0 <strlen>
   c5:	83 c4 0c             	add    $0xc,%esp
   c8:	50                   	push   %eax
-  c9:	68 be 04 00 00       	push   $0x4be
+  c9:	68 d6 04 00 00       	push   $0x4d6
   ce:	6a 01                	push   $0x1
   d0:	e8 1c 03 00 00       	call   3f1 <write>
 }
@@ -112,11 +112,11 @@ main(void)
   da:	8d b6 00 00 00 00    	lea    0x0(%esi),%esi
   write(fd, s, strlen(s));
   e0:	83 ec 0c             	sub    $0xc,%esp
-  e3:	68 cc 04 00 00       	push   $0x4cc
+  e3:	68 e4 04 00 00       	push   $0x4e4
   e8:	e8 e3 00 00 00       	call   1d0 <strlen>
   ed:	83 c4 0c             	add    $0xc,%esp
   f0:	50                   	push   %eax
-  f1:	68 cc 04 00 00       	push   $0x4cc
+  f1:	68 e4 04 00 00       	push   $0x4e4
   f6:	6a 01                	push   $0x1
   f8:	e8 f4 02 00 00       	call   3f1 <write>
     exit();
@@ -125,22 +125,22 @@ main(void)
  102:	e8 ca 02 00 00       	call   3d1 <exit>
   write(fd, s, strlen(s));
  107:	83 ec 0c             	sub    $0xc,%esp
- 10a:	68 97 04 00 00       	push   $0x497
+ 10a:	68 af 04 00 00       	push   $0x4af
  10f:	e8 bc 00 00 00       	call   1d0 <strlen>
  114:	83 c4 0c             	add    $0xc,%esp
  117:	50                   	push   %eax
- 118:	68 97 04 00 00       	push   $0x497
+ 118:	68 af 04 00 00       	push   $0x4af
  11d:	6a 01                	push   $0x1
  11f:	e8 cd 02 00 00       	call   3f1 <write>
       exit();
  124:	e8 a8 02 00 00       	call   3d1 <exit>
   write(fd, s, strlen(s));
  129:	83 ec 0c             	sub    $0xc,%esp
- 12c:	68 ab 04 00 00       	push   $0x4ab
+ 12c:	68 c3 04 00 00       	push   $0x4c3
  131:	e8 9a 00 00 00       	call   1d0 <strlen>
  136:	83 c4 0c             	add    $0xc,%esp
  139:	50                   	push   %eax
- 13a:	68 ab 04 00 00       	push   $0x4ab
+ 13a:	68 c3 04 00 00       	push   $0x4c3
  13f:	6a 01                	push   $0x1
  141:	e8 ab 02 00 00       	call   3f1 <write>
     exit();
@@ -551,7 +551,7 @@ srand(uint s)
 }
  3a6:	5d                   	pop    %ebp
   seed = s;
- 3a7:	a3 2c 07 00 00       	mov    %eax,0x72c
+ 3a7:	a3 44 07 00 00       	mov    %eax,0x744
 }
  3ac:	c3                   	ret    
  3ad:	8d 76 00             	lea    0x0(%esi),%esi
@@ -563,7 +563,7 @@ random(void)
 {
   seed = seed
     * 1103515245
- 3b0:	69 05 2c 07 00 00 6d 	imul   $0x41c64e6d,0x72c,%eax
+ 3b0:	69 05 44 07 00 00 6d 	imul   $0x41c64e6d,0x744,%eax
  3b7:	4e c6 41 
 {
  3ba:	55                   	push   %ebp
@@ -576,7 +576,7 @@ random(void)
     + 12345
  3be:	05 39 30 00 00       	add    $0x3039,%eax
   seed = seed
- 3c3:	a3 2c 07 00 00       	mov    %eax,0x72c
+ 3c3:	a3 44 07 00 00       	mov    %eax,0x744
 }
  3c8:	c3                   	ret    
 
@@ -728,3 +728,21 @@ SYSCALL(sem_release)
  481:	b8 18 00 00 00       	mov    $0x18,%eax
  486:	cd 40                	int    $0x40
  488:	c3                   	ret    
+
+00000489 <setvar>:
+SYSCALL(setvar)
+ 489:	b8 19 00 00 00       	mov    $0x19,%eax
+ 48e:	cd 40                	int    $0x40
+ 490:	c3                   	ret    
+
+00000491 <getvar>:
+SYSCALL(getvar)
+ 491:	b8 1a 00 00 00       	mov    $0x1a,%eax
+ 496:	cd 40                	int    $0x40
+ 498:	c3                   	ret    
+
+00000499 <modvar>:
+SYSCALL(modvar)
+ 499:	b8 1b 00 00 00       	mov    $0x1b,%eax
+ 49e:	cd 40                	int    $0x40
+ 4a0:	c3                   	ret    

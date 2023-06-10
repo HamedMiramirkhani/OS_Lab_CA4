@@ -1,89 +1,100 @@
 #include "types.h"
+#include "stat.h"
 #include "user.h"
+#include "fcntl.h"
 
-#define LEFT(i) i
-#define RIGHT(i) (i + 1) % 5
+#define NREADERS 3
+#define NWRITERS 2
 
-// mutex is used to make printf atomic
-#define MUTEX 5
+#define WRT 0
+#define MUTEX 1
+#define PRINT_MUTEX 2
 
-#define ATOMIC(x) sem_acquire(MUTEX); x; sem_release(MUTEX);
+#define ATOMIC(x)               \
+    sem_acquire(PRINT_MUTEX);   \
+    x;                          \
+    sem_release(PRINT_MUTEX);
 
-// void waitUntilHungry(int i)
-// {
-//     int time = random() % 1000;
-//     ATOMIC(printf(1, "Philosopher %d will be thinking for %d ticks\n", i, time));
-//     sleep(time);
-// }
+void init_sems()
+{
+    sem_init(WRT, 1, "wrt");
+    sem_init(MUTEX, 1, "mtx");
+    sem_init(PRINT_MUTEX, 1, "prmtx");
+}
 
-// void eatUntilFull(int i)
-// {
-//     int time = random() % 1000;
-//     ATOMIC(printf(1, "Philosopher %d will be eating for %d ticks\n", i, time));
-//     sleep(time);
-// }
+void reader(int id)
+{
+    int i = 5;
+    while (i--)
+    {
+        ATOMIC(printf(1, "Reader ID %d: wants to read\n", id))
+        sem_acquire(MUTEX);
+        modvar(1);
+        if (getvar() == 1)
+        {
+            ATOMIC(printf(1, "Reader ID %d: wants to get writing lock\n", id))
+            sem_acquire(WRT);
+        }
+        sem_release(MUTEX);
 
-// void init()
-// {
-//     for (int i = 0; i < 5; i++)
-//         sem_init(i, 1);
-//     sem_init(MUTEX, 1);
-// }
+        ATOMIC(printf(1, "Reader ID %d: read\n", id))
 
-// void pickup(int i)
-// {
-//     if (i % 2 == 0)
-//     {
-//         ATOMIC(printf(1, "Philosopher %d is going to pick up the left fork first\n", i));
-//         sem_acquire(LEFT(i));
-//         ATOMIC(printf(1, "Philosopher %d is going to pick up the right fork\n", i));
-//         sem_acquire(RIGHT(i));
-//     }
-//     else
-//     {
-//         ATOMIC(printf(1, "Philosopher %d is going to pick up the right fork first\n", i));
-//         sem_acquire(RIGHT(i));
-//         ATOMIC(printf(1, "Philosopher %d is going to pick up the left fork\n", i));
-//         sem_acquire(LEFT(i));
-//     }
-//     ATOMIC(printf(1, "Philosopher %d has picked up both forks\n", i));
-// }
+        sem_acquire(MUTEX);
+        modvar(-1);
 
-// void putdown(int i)
-// {
-//     sem_release(LEFT(i));
-//     sem_release(RIGHT(i));
-//     ATOMIC(printf(1, "Philosopher %d has put down both forks\n", i));
-// }
+        if (getvar() == 0)
+        {
+            ATOMIC(printf(1, "Reader ID %d: released writing lock\n", id))
+            sem_release(WRT);
+        }
+        sem_release(MUTEX);
 
-// void philosopher(int i)
-// {
-//     while (1)
-//     {
-//         pickup(i);
-//         eatUntilFull(i);
-//         putdown(i);
-//         waitUntilHungry(i);
-//     }
-// }
+        sleep(10);
+    }
+}
 
-// void start()
-// {
-//     for (int i = 0; i < 5; i++)
-//         if (fork() == 0)
-//         {
-//             srand(getpid());
-//             philosopher(i);
-//             exit();
-//         }
+void writer(int id)
+{
+    int i = 5;
+    while (i--)
+    {
+        ATOMIC(printf(1, "Writer ID %d: wants to write\n", id))
+        sem_acquire(WRT);
+        sem_release(WRT);
+        ATOMIC(printf(1, "Writer ID %d: wrote\n", id))
+        sleep(10);
+    }
+}
 
-//     for (int i = 0; i < 5; i++)
-//         wait();
-// }
+void start()
+{
+    for (int i = 0; i < NREADERS; i++)
+    {
+        if (fork() == 0)
+        {
+            reader(i);
+            exit();
+        }
+    }
 
-// int main()
-// {
-//     init();
-//     start();
-//     exit();
-// }
+    sleep(30);
+
+    for (int i = 0; i < NWRITERS; i++)
+    {
+        if (fork() == 0)
+        {
+            writer(i);
+            exit();
+        }
+    }
+
+    for (int i = 0; i < NREADERS + NWRITERS; i++)
+        wait();
+}
+
+int main(void)
+{
+    init_sems();
+    start();
+    exit();
+}

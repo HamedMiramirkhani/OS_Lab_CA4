@@ -122,6 +122,8 @@ int             wait(void);
 void            wakeup(void*);
 void            yield(void);
 
+
+
 // swtch.S
 void            swtch(struct context**, struct context*);
 
@@ -188,11 +190,11 @@ int             copyout(pde_t*, uint, void*, uint);
 void            clearpteu(pde_t *pgdir, char *uva);
 
 // semaphore.c
-void            semaphore_init(struct semaphore*, int);
+void            semaphore_init(struct semaphore*, int, char*);
 void            semaphore_acquire(struct semaphore*);
 void            semaphore_release(struct semaphore*);
 int             semaphore_holding(struct semaphore*);
-void            sem_init(int, int);
+void            sem_init(int, int,char*);
 void            sem_acquire(int);
 void            sem_release(int);
 

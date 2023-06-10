@@ -7,6 +7,8 @@
 #include "mmu.h"
 #include "proc.h"
 
+int my_variable;
+
 int
 sys_fork(void)
 {
@@ -90,19 +92,20 @@ sys_uptime(void)
   return xticks;
 }
 
-int
-sys_sem_init(void)
+int sys_sem_init(void)
 {
   int sem_id, value;
-  if(argint(0, &sem_id) < 0 || argint(1, &value) < 0)
+  char *name;
+  if (argint(0, &sem_id) < 0 || argint(1, &value) < 0 || argstr(2, &name) < 0)
     return -1;
 
-  if(sem_id < 0 || sem_id >= NSEMS)
+  if (sem_id < 0 || sem_id >= NSEM)
     return -1;
 
-  sem_init(sem_id, value);
+  sem_init(sem_id, value, name);
   return 0;
 }
+
 
 int
 sys_sem_acquire(void)
@@ -111,7 +114,7 @@ sys_sem_acquire(void)
   if(argint(0, &sem_id) < 0)
     return -1;
 
-  if(sem_id < 0 || sem_id >= NSEMS)
+  if(sem_id < 0 || sem_id >= NSEM)
     return -1;
 
   sem_acquire(sem_id);
@@ -125,9 +128,32 @@ sys_sem_release(void)
   if(argint(0, &sem_id) < 0)
     return -1;
 
-  if(sem_id < 0 || sem_id >= NSEMS)
+  if(sem_id < 0 || sem_id >= NSEM)
     return -1;
 
   sem_release(sem_id);
+  return 0;
+}
+
+int sys_setvar(void)
+{
+  int value;
+  if (argint(0, &value) < 0)
+    return -1;
+  my_variable = value;
+  return 0;
+}
+
+int sys_getvar(void)
+{
+  return my_variable;
+}
+
+int sys_modvar(void)
+{
+  int value;
+  if (argint(0, &value) < 0)
+    return -1;
+  my_variable += value;
   return 0;
 }
